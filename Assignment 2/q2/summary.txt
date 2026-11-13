@@ -1,0 +1,432 @@
+PROBLEM 2 - concurrent directed graph (array of sorted adjacency lists)
+Initial graph: 10000 vertices, 2000000 edges (fixed for every experiment).
+Times are the mean of the OK repetitions. NA = timeout/failure (listed at the end).
+seq = sequential baseline without any locks; speedup = T(seq) / T(impl, threads).
+
+========================================================================================================
+ratio insert/delete/search = 80/10/10%   ops = 1000000   seq time = 446.1 ms   final edges (seq) = 2778117
+========================================================================================================
+Time (ms)
+ threads   P1 graph-mtx   P2 list-mtx   P3 node-mtx    P4 node-rw   P5 node-cas   P6 optimist  best
+       1          455.3         422.8        1585.3        2388.6         589.5         570.2  P2 list-mtx
+       2          644.7         277.8         992.3        1213.8         333.8         331.4  P2 list-mtx
+       4          727.7         151.1         525.1         671.8         189.0         188.3  P2 list-mtx
+       8          734.9          77.4         304.4         367.5         119.1          98.2  P2 list-mtx
+      12          777.8          57.1         260.2         330.5          95.7          75.3  P2 list-mtx
+      16          847.5          46.7         223.4         295.1          82.0          59.6  P2 list-mtx
+      24          900.5          35.7         191.0         252.7          61.4          47.3  P2 list-mtx
+      32          943.3          32.9         192.5         238.1          57.2          49.4  P2 list-mtx
+
+Throughput (million ops/s)
+ threads   P1 graph-mtx   P2 list-mtx   P3 node-mtx    P4 node-rw   P5 node-cas   P6 optimist  best
+       1          2.197         2.365         0.631         0.419         1.696         1.754  P2 list-mtx
+       2          1.551         3.600         1.008         0.824         2.996         3.018  P2 list-mtx
+       4          1.374         6.616         1.904         1.488         5.290         5.311  P2 list-mtx
+       8          1.361        12.923         3.285         2.721         8.393        10.188  P2 list-mtx
+      12          1.286        17.505         3.844         3.025        10.447        13.276  P2 list-mtx
+      16          1.180        21.417         4.475         3.389        12.194        16.785  P2 list-mtx
+      24          1.111        28.046         5.235         3.957        16.277        21.146  P2 list-mtx
+      32          1.060        30.410         5.194         4.201        17.476        20.249  P2 list-mtx
+
+Speedup over sequential baseline
+ threads   P1 graph-mtx   P2 list-mtx   P3 node-mtx    P4 node-rw   P5 node-cas   P6 optimist  best
+       1           0.98          1.06          0.28          0.19          0.76          0.78  P2 list-mtx
+       2           0.69          1.61          0.45          0.37          1.34          1.35  P2 list-mtx
+       4           0.61          2.95          0.85          0.66          2.36          2.37  P2 list-mtx
+       8           0.61          5.77          1.47          1.21          3.74          4.55  P2 list-mtx
+      12           0.57          7.81          1.71          1.35          4.66          5.92  P2 list-mtx
+      16           0.53          9.55          2.00          1.51          5.44          7.49  P2 list-mtx
+      24           0.50         12.51          2.34          1.77          7.26          9.43  P2 list-mtx
+      32           0.47         13.57          2.32          1.87          7.80          9.03  P2 list-mtx
+
+Self speedup (T(impl, 1 thr) / T(impl, threads))
+ threads   P1 graph-mtx   P2 list-mtx   P3 node-mtx    P4 node-rw   P5 node-cas   P6 optimist  best
+       1           1.00          1.00          1.00          1.00          1.00          1.00  P1 graph-mtx
+       2           0.71          1.52          1.60          1.97          1.77          1.72  P4 node-rw
+       4           0.63          2.80          3.02          3.56          3.12          3.03  P4 node-rw
+       8           0.62          5.46          5.21          6.50          4.95          5.81  P4 node-rw
+      12           0.59          7.40          6.09          7.23          6.16          7.57  P6 optimist
+      16           0.54          9.06          7.09          8.09          7.19          9.57  P6 optimist
+      24           0.51         11.86          8.30          9.45          9.60         12.06  P6 optimist
+      32           0.48         12.86          8.23         10.03         10.30         11.55  P2 list-mtx
+
+========================================================================================================
+ratio insert/delete/search = 80/10/10%   ops = 2000000   seq time = 1643.3 ms   final edges (seq) = 3549806
+========================================================================================================
+Time (ms)
+ threads   P1 graph-mtx   P2 list-mtx   P3 node-mtx    P4 node-rw   P5 node-cas   P6 optimist  best
+       1         1671.0        1794.6        5822.8        7844.1        1846.7        2554.3  P1 graph-mtx
+       2         2210.0         951.8        3182.0        4029.8        1015.4        1455.4  P2 list-mtx
+       4         2328.5         524.7        1866.1        2169.9         573.0         796.8  P2 list-mtx
+       8         2420.3         329.9        1066.6        1256.0         409.1         407.7  P2 list-mtx
+      12         2610.7         239.2         876.1        1021.2         323.4         323.5  P2 list-mtx
+      16         2680.2         190.9         720.0         858.8         260.6         254.9  P2 list-mtx
+      24         2794.6         139.0         592.7         737.0         199.5         196.5  P2 list-mtx
+      32         3031.2         110.5         549.5         706.5         176.1         180.6  P2 list-mtx
+
+Throughput (million ops/s)
+ threads   P1 graph-mtx   P2 list-mtx   P3 node-mtx    P4 node-rw   P5 node-cas   P6 optimist  best
+       1          1.197         1.114         0.343         0.255         1.083         0.783  P1 graph-mtx
+       2          0.905         2.101         0.629         0.496         1.970         1.374  P2 list-mtx
+       4          0.859         3.811         1.072         0.922         3.491         2.510  P2 list-mtx
+       8          0.826         6.062         1.875         1.592         4.889         4.906  P2 list-mtx
+      12          0.766         8.360         2.283         1.958         6.185         6.182  P2 list-mtx
+      16          0.746        10.477         2.778         2.329         7.674         7.845  P2 list-mtx
+      24          0.716        14.392         3.374         2.714        10.023        10.178  P2 list-mtx
+      32          0.660        18.108         3.640         2.831        11.355        11.072  P2 list-mtx
+
+Speedup over sequential baseline
+ threads   P1 graph-mtx   P2 list-mtx   P3 node-mtx    P4 node-rw   P5 node-cas   P6 optimist  best
+       1           0.98          0.92          0.28          0.21          0.89          0.64  P1 graph-mtx
+       2           0.74          1.73          0.52          0.41          1.62          1.13  P2 list-mtx
+       4           0.71          3.13          0.88          0.76          2.87          2.06  P2 list-mtx
+       8           0.68          4.98          1.54          1.31          4.02          4.03  P2 list-mtx
+      12           0.63          6.87          1.88          1.61          5.08          5.08  P2 list-mtx
+      16           0.61          8.61          2.28          1.91          6.31          6.45  P2 list-mtx
+      24           0.59         11.83          2.77          2.23          8.24          8.36  P2 list-mtx
+      32           0.54         14.88          2.99          2.33          9.33          9.10  P2 list-mtx
+
+Self speedup (T(impl, 1 thr) / T(impl, threads))
+ threads   P1 graph-mtx   P2 list-mtx   P3 node-mtx    P4 node-rw   P5 node-cas   P6 optimist  best
+       1           1.00          1.00          1.00          1.00          1.00          1.00  P1 graph-mtx
+       2           0.76          1.89          1.83          1.95          1.82          1.76  P4 node-rw
+       4           0.72          3.42          3.12          3.61          3.22          3.21  P4 node-rw
+       8           0.69          5.44          5.46          6.25          4.51          6.27  P6 optimist
+      12           0.64          7.50          6.65          7.68          5.71          7.90  P6 optimist
+      16           0.62          9.40          8.09          9.13          7.09         10.02  P6 optimist
+      24           0.60         12.91          9.82         10.64          9.26         13.00  P6 optimist
+      32           0.55         16.25         10.60         11.10         10.49         14.14  P2 list-mtx
+
+========================================================================================================
+ratio insert/delete/search = 80/10/10%   ops = 4000000   seq time = 10291.5 ms   final edges (seq) = 5071830
+========================================================================================================
+Time (ms)
+ threads   P1 graph-mtx   P2 list-mtx   P3 node-mtx    P4 node-rw   P5 node-cas   P6 optimist  best
+       1        10045.1        9903.7       26246.8       31151.7       10193.8       15087.5  P2 list-mtx
+       2        11806.4        5351.3       13896.0       15492.6        5444.9        7869.0  P2 list-mtx
+       4        11997.5        2862.8        7566.7        8218.6        2907.7        4038.1  P2 list-mtx
+       8        12642.3        1533.0        4270.0        4608.1        1689.5        2177.2  P2 list-mtx
+      12        12796.5        1225.6        3392.5        3720.5        1364.9        1766.0  P2 list-mtx
+      16        13017.2         978.8        2758.7        3052.3        1100.4        1376.3  P2 list-mtx
+      24        13442.6         717.0        2127.2        2445.1         802.1         994.3  P2 list-mtx
+      32        13871.3         577.8        1880.2        2340.0         615.5         920.2  P2 list-mtx
+
+Throughput (million ops/s)
+ threads   P1 graph-mtx   P2 list-mtx   P3 node-mtx    P4 node-rw   P5 node-cas   P6 optimist  best
+       1          0.398         0.404         0.152         0.128         0.392         0.265  P2 list-mtx
+       2          0.339         0.747         0.288         0.258         0.735         0.508  P2 list-mtx
+       4          0.333         1.397         0.529         0.487         1.376         0.991  P2 list-mtx
+       8          0.316         2.609         0.937         0.868         2.368         1.837  P2 list-mtx
+      12          0.313         3.264         1.179         1.075         2.931         2.265  P2 list-mtx
+      16          0.307         4.087         1.450         1.310         3.635         2.906  P2 list-mtx
+      24          0.298         5.578         1.880         1.636         4.987         4.023  P2 list-mtx
+      32          0.288         6.923         2.127         1.709         6.499         4.347  P2 list-mtx
+
+Speedup over sequential baseline
+ threads   P1 graph-mtx   P2 list-mtx   P3 node-mtx    P4 node-rw   P5 node-cas   P6 optimist  best
+       1           1.02          1.04          0.39          0.33          1.01          0.68  P2 list-mtx
+       2           0.87          1.92          0.74          0.66          1.89          1.31  P2 list-mtx
+       4           0.86          3.59          1.36          1.25          3.54          2.55  P2 list-mtx
+       8           0.81          6.71          2.41          2.23          6.09          4.73  P2 list-mtx
+      12           0.80          8.40          3.03          2.77          7.54          5.83  P2 list-mtx
+      16           0.79         10.51          3.73          3.37          9.35          7.48  P2 list-mtx
+      24           0.77         14.35          4.84          4.21         12.83         10.35  P2 list-mtx
+      32           0.74         17.81          5.47          4.40         16.72         11.18  P2 list-mtx
+
+Self speedup (T(impl, 1 thr) / T(impl, threads))
+ threads   P1 graph-mtx   P2 list-mtx   P3 node-mtx    P4 node-rw   P5 node-cas   P6 optimist  best
+       1           1.00          1.00          1.00          1.00          1.00          1.00  P1 graph-mtx
+       2           0.85          1.85          1.89          2.01          1.87          1.92  P4 node-rw
+       4           0.84          3.46          3.47          3.79          3.51          3.74  P4 node-rw
+       8           0.79          6.46          6.15          6.76          6.03          6.93  P6 optimist
+      12           0.78          8.08          7.74          8.37          7.47          8.54  P6 optimist
+      16           0.77         10.12          9.51         10.21          9.26         10.96  P6 optimist
+      24           0.75         13.81         12.34         12.74         12.71         15.17  P6 optimist
+      32           0.72         17.14         13.96         13.31         16.56         16.40  P2 list-mtx
+
+========================================================================================================
+ratio insert/delete/search = 30/30/40%   ops = 1000000   seq time = 328.3 ms   final edges (seq) = 2287360
+========================================================================================================
+Time (ms)
+ threads   P1 graph-mtx   P2 list-mtx   P3 node-mtx    P4 node-rw   P5 node-cas   P6 optimist  best
+       1          278.6         289.7        1058.7        1591.1         491.2         406.0  P1 graph-mtx
+       2          406.9         170.2         680.4         770.2         258.4         213.9  P2 list-mtx
+       4          534.1          88.6         350.5         441.8         137.6         116.8  P2 list-mtx
+       8          545.9          45.7         220.7         264.2          88.0          59.6  P2 list-mtx
+      12          631.7          32.4         182.2         220.2          67.6          41.8  P2 list-mtx
+      16          644.6          25.6         147.4         211.6          55.4          36.2  P2 list-mtx
+      24          700.0          19.4         137.1         188.7          43.9          27.7  P2 list-mtx
+      32          720.8          17.7         134.7         187.6          46.9          22.2  P2 list-mtx
+
+Throughput (million ops/s)
+ threads   P1 graph-mtx   P2 list-mtx   P3 node-mtx    P4 node-rw   P5 node-cas   P6 optimist  best
+       1          3.590         3.452         0.945         0.629         2.036         2.463  P1 graph-mtx
+       2          2.458         5.876         1.470         1.298         3.870         4.675  P2 list-mtx
+       4          1.872        11.285         2.853         2.263         7.269         8.564  P2 list-mtx
+       8          1.832        21.885         4.532         3.785        11.357        16.784  P2 list-mtx
+      12          1.583        30.846         5.490         4.541        14.794        23.903  P2 list-mtx
+      16          1.551        39.061         6.784         4.727        18.038        27.603  P2 list-mtx
+      24          1.428        51.544         7.295         5.299        22.760        36.048  P2 list-mtx
+      32          1.387        56.386         7.424         5.331        21.315        45.111  P2 list-mtx
+
+Speedup over sequential baseline
+ threads   P1 graph-mtx   P2 list-mtx   P3 node-mtx    P4 node-rw   P5 node-cas   P6 optimist  best
+       1           1.18          1.13          0.31          0.21          0.67          0.81  P1 graph-mtx
+       2           0.81          1.93          0.48          0.43          1.27          1.53  P2 list-mtx
+       4           0.61          3.70          0.94          0.74          2.39          2.81  P2 list-mtx
+       8           0.60          7.18          1.49          1.24          3.73          5.51  P2 list-mtx
+      12           0.52         10.13          1.80          1.49          4.86          7.85  P2 list-mtx
+      16           0.51         12.82          2.23          1.55          5.92          9.06  P2 list-mtx
+      24           0.47         16.92          2.39          1.74          7.47         11.83  P2 list-mtx
+      32           0.46         18.51          2.44          1.75          7.00         14.81  P2 list-mtx
+
+Self speedup (T(impl, 1 thr) / T(impl, threads))
+ threads   P1 graph-mtx   P2 list-mtx   P3 node-mtx    P4 node-rw   P5 node-cas   P6 optimist  best
+       1           1.00          1.00          1.00          1.00          1.00          1.00  P1 graph-mtx
+       2           0.68          1.70          1.56          2.07          1.90          1.90  P4 node-rw
+       4           0.52          3.27          3.02          3.60          3.57          3.48  P4 node-rw
+       8           0.51          6.34          4.80          6.02          5.58          6.81  P6 optimist
+      12           0.44          8.94          5.81          7.22          7.27          9.70  P6 optimist
+      16           0.43         11.31          7.18          7.52          8.86         11.21  P2 list-mtx
+      24           0.40         14.93          7.72          8.43         11.18         14.64  P2 list-mtx
+      32           0.39         16.33          7.86          8.48         10.47         18.32  P6 optimist
+
+========================================================================================================
+ratio insert/delete/search = 30/30/40%   ops = 2000000   seq time = 755.2 ms   final edges (seq) = 2572627
+========================================================================================================
+Time (ms)
+ threads   P1 graph-mtx   P2 list-mtx   P3 node-mtx    P4 node-rw   P5 node-cas   P6 optimist  best
+       1          815.4         827.7        2448.9        4073.7        1105.7        1008.5  P1 graph-mtx
+       2         1051.7         479.2        1652.4        2012.2         580.6         544.4  P2 list-mtx
+       4         1234.6         238.6         888.7        1099.4         327.3         315.8  P2 list-mtx
+       8         1391.9         129.0         568.0         692.4         220.3         164.6  P2 list-mtx
+      12         1442.6          93.5         451.4         576.1         179.2         115.0  P2 list-mtx
+      16         1494.2          76.0         384.6         498.0         142.4          95.4  P2 list-mtx
+      24         1599.4          59.1         336.2         450.9         111.8          76.8  P2 list-mtx
+      32         1675.5          46.2         326.3         456.3          91.3          63.0  P2 list-mtx
+
+Throughput (million ops/s)
+ threads   P1 graph-mtx   P2 list-mtx   P3 node-mtx    P4 node-rw   P5 node-cas   P6 optimist  best
+       1          2.453         2.416         0.817         0.491         1.809         1.983  P1 graph-mtx
+       2          1.902         4.174         1.210         0.994         3.445         3.674  P2 list-mtx
+       4          1.620         8.382         2.251         1.819         6.111         6.333  P2 list-mtx
+       8          1.437        15.506         3.521         2.889         9.079        12.154  P2 list-mtx
+      12          1.386        21.382         4.431         3.472        11.161        17.399  P2 list-mtx
+      16          1.338        26.312         5.200         4.016        14.042        20.963  P2 list-mtx
+      24          1.250        33.813         5.948         4.436        17.890        26.034  P2 list-mtx
+      32          1.194        43.255         6.130         4.383        21.915        31.745  P2 list-mtx
+
+Speedup over sequential baseline
+ threads   P1 graph-mtx   P2 list-mtx   P3 node-mtx    P4 node-rw   P5 node-cas   P6 optimist  best
+       1           0.93          0.91          0.31          0.19          0.68          0.75  P1 graph-mtx
+       2           0.72          1.58          0.46          0.38          1.30          1.39  P2 list-mtx
+       4           0.61          3.17          0.85          0.69          2.31          2.39  P2 list-mtx
+       8           0.54          5.86          1.33          1.09          3.43          4.59  P2 list-mtx
+      12           0.52          8.07          1.67          1.31          4.21          6.57  P2 list-mtx
+      16           0.51          9.94          1.96          1.52          5.30          7.92  P2 list-mtx
+      24           0.47         12.77          2.25          1.67          6.76          9.83  P2 list-mtx
+      32           0.45         16.33          2.31          1.66          8.28         11.99  P2 list-mtx
+
+Self speedup (T(impl, 1 thr) / T(impl, threads))
+ threads   P1 graph-mtx   P2 list-mtx   P3 node-mtx    P4 node-rw   P5 node-cas   P6 optimist  best
+       1           1.00          1.00          1.00          1.00          1.00          1.00  P1 graph-mtx
+       2           0.78          1.73          1.48          2.02          1.90          1.85  P4 node-rw
+       4           0.66          3.47          2.76          3.71          3.38          3.19  P4 node-rw
+       8           0.59          6.42          4.31          5.88          5.02          6.13  P2 list-mtx
+      12           0.57          8.85          5.43          7.07          6.17          8.77  P2 list-mtx
+      16           0.55         10.89          6.37          8.18          7.76         10.57  P2 list-mtx
+      24           0.51         13.99          7.28          9.03          9.89         13.13  P2 list-mtx
+      32           0.49         17.90          7.51          8.93         12.12         16.01  P2 list-mtx
+
+========================================================================================================
+ratio insert/delete/search = 30/30/40%   ops = 4000000   seq time = 2410.3 ms   final edges (seq) = 3138183
+========================================================================================================
+Time (ms)
+ threads   P1 graph-mtx   P2 list-mtx   P3 node-mtx    P4 node-rw   P5 node-cas   P6 optimist  best
+       1         2409.2        2449.7        8510.3       11952.6        2940.2        3326.9  P1 graph-mtx
+       2         3255.7        1316.2        4793.1        6177.7        1524.8        1907.6  P2 list-mtx
+       4         3708.3         772.2        3006.2        3322.3         927.3        1049.1  P2 list-mtx
+       8         3892.4         459.9        1605.5        1987.4         632.8         574.8  P2 list-mtx
+      12         4100.6         351.4        1386.8        1652.2         533.7         451.0  P2 list-mtx
+      16         4244.2         284.1        1160.0        1414.4         443.8         379.5  P2 list-mtx
+      24         4533.2         209.2         957.2        1227.1         347.3         281.6  P2 list-mtx
+      32         4792.2         162.6         894.3        1242.2         278.3         232.4  P2 list-mtx
+
+Throughput (million ops/s)
+ threads   P1 graph-mtx   P2 list-mtx   P3 node-mtx    P4 node-rw   P5 node-cas   P6 optimist  best
+       1          1.660         1.633         0.470         0.335         1.360         1.202  P1 graph-mtx
+       2          1.229         3.039         0.835         0.647         2.623         2.097  P2 list-mtx
+       4          1.079         5.180         1.331         1.204         4.314         3.813  P2 list-mtx
+       8          1.028         8.697         2.491         2.013         6.321         6.958  P2 list-mtx
+      12          0.975        11.382         2.884         2.421         7.494         8.870  P2 list-mtx
+      16          0.942        14.081         3.448         2.828         9.012        10.541  P2 list-mtx
+      24          0.882        19.124         4.179         3.260        11.518        14.205  P2 list-mtx
+      32          0.835        24.607         4.473         3.220        14.374        17.215  P2 list-mtx
+
+Speedup over sequential baseline
+ threads   P1 graph-mtx   P2 list-mtx   P3 node-mtx    P4 node-rw   P5 node-cas   P6 optimist  best
+       1           1.00          0.98          0.28          0.20          0.82          0.72  P1 graph-mtx
+       2           0.74          1.83          0.50          0.39          1.58          1.26  P2 list-mtx
+       4           0.65          3.12          0.80          0.73          2.60          2.30  P2 list-mtx
+       8           0.62          5.24          1.50          1.21          3.81          4.19  P2 list-mtx
+      12           0.59          6.86          1.74          1.46          4.52          5.34  P2 list-mtx
+      16           0.57          8.48          2.08          1.70          5.43          6.35  P2 list-mtx
+      24           0.53         11.52          2.52          1.96          6.94          8.56  P2 list-mtx
+      32           0.50         14.83          2.70          1.94          8.66         10.37  P2 list-mtx
+
+Self speedup (T(impl, 1 thr) / T(impl, threads))
+ threads   P1 graph-mtx   P2 list-mtx   P3 node-mtx    P4 node-rw   P5 node-cas   P6 optimist  best
+       1           1.00          1.00          1.00          1.00          1.00          1.00  P1 graph-mtx
+       2           0.74          1.86          1.78          1.93          1.93          1.74  P4 node-rw
+       4           0.65          3.17          2.83          3.60          3.17          3.17  P4 node-rw
+       8           0.62          5.33          5.30          6.01          4.65          5.79  P4 node-rw
+      12           0.59          6.97          6.14          7.23          5.51          7.38  P6 optimist
+      16           0.57          8.62          7.34          8.45          6.62          8.77  P6 optimist
+      24           0.53         11.71          8.89          9.74          8.47         11.81  P6 optimist
+      32           0.50         15.07          9.52          9.62         10.57         14.32  P2 list-mtx
+
+========================================================================================================
+ratio insert/delete/search = 10/10/80%   ops = 1000000   seq time = 206.6 ms   final edges (seq) = 2095862
+========================================================================================================
+Time (ms)
+ threads   P1 graph-mtx   P2 list-mtx   P3 node-mtx    P4 node-rw   P5 node-cas   P6 optimist  best
+       1          246.6         249.7         685.0        1183.2         471.0         334.9  P1 graph-mtx
+       2          318.0         115.2         563.0         643.6         247.5         183.1  P2 list-mtx
+       4          410.4          68.5         317.1         359.3         128.6          91.4  P2 list-mtx
+       8          477.9          35.5         186.4         223.1          79.9          47.1  P2 list-mtx
+      12          546.6          24.8         146.1         189.9          57.6          32.8  P2 list-mtx
+      16          574.9          19.8         132.6         181.8          46.2          26.6  P2 list-mtx
+      24          614.2          14.4         115.7         170.2          36.9          21.1  P2 list-mtx
+      32          623.5          12.9         115.6         165.9          41.3          19.3  P2 list-mtx
+
+Throughput (million ops/s)
+ threads   P1 graph-mtx   P2 list-mtx   P3 node-mtx    P4 node-rw   P5 node-cas   P6 optimist  best
+       1          4.056         4.004         1.460         0.845         2.123         2.986  P1 graph-mtx
+       2          3.144         8.680         1.776         1.554         4.041         5.460  P2 list-mtx
+       4          2.437        14.609         3.153         2.783         7.777        10.944  P2 list-mtx
+       8          2.093        28.148         5.365         4.482        12.522        21.242  P2 list-mtx
+      12          1.829        40.380         6.842         5.266        17.373        30.480  P2 list-mtx
+      16          1.739        50.453         7.539         5.502        21.636        37.540  P2 list-mtx
+      24          1.628        69.289         8.643         5.875        27.078        47.301  P2 list-mtx
+      32          1.604        77.421         8.649         6.028        24.237        51.766  P2 list-mtx
+
+Speedup over sequential baseline
+ threads   P1 graph-mtx   P2 list-mtx   P3 node-mtx    P4 node-rw   P5 node-cas   P6 optimist  best
+       1           0.84          0.83          0.30          0.17          0.44          0.62  P1 graph-mtx
+       2           0.65          1.79          0.37          0.32          0.84          1.13  P2 list-mtx
+       4           0.50          3.02          0.65          0.58          1.61          2.26  P2 list-mtx
+       8           0.43          5.82          1.11          0.93          2.59          4.39  P2 list-mtx
+      12           0.38          8.34          1.41          1.09          3.59          6.30  P2 list-mtx
+      16           0.36         10.43          1.56          1.14          4.47          7.76  P2 list-mtx
+      24           0.34         14.32          1.79          1.21          5.60          9.77  P2 list-mtx
+      32           0.33         16.00          1.79          1.25          5.01         10.70  P2 list-mtx
+
+Self speedup (T(impl, 1 thr) / T(impl, threads))
+ threads   P1 graph-mtx   P2 list-mtx   P3 node-mtx    P4 node-rw   P5 node-cas   P6 optimist  best
+       1           1.00          1.00          1.00          1.00          1.00          1.00  P1 graph-mtx
+       2           0.78          2.17          1.22          1.84          1.90          1.83  P2 list-mtx
+       4           0.60          3.65          2.16          3.29          3.66          3.67  P6 optimist
+       8           0.52          7.03          3.68          5.30          5.90          7.11  P6 optimist
+      12           0.45         10.08          4.69          6.23          8.18         10.21  P6 optimist
+      16           0.43         12.60          5.16          6.51         10.19         12.57  P2 list-mtx
+      24           0.40         17.30          5.92          6.95         12.75         15.84  P2 list-mtx
+      32           0.40         19.33          5.92          7.13         11.42         17.34  P2 list-mtx
+
+========================================================================================================
+ratio insert/delete/search = 10/10/80%   ops = 2000000   seq time = 491.8 ms   final edges (seq) = 2191517
+========================================================================================================
+Time (ms)
+ threads   P1 graph-mtx   P2 list-mtx   P3 node-mtx    P4 node-rw   P5 node-cas   P6 optimist  best
+       1          543.1         486.9        1406.3        2569.2         955.4         705.8  P2 list-mtx
+       2          682.4         303.4        1251.6        1337.5         504.9         398.3  P2 list-mtx
+       4          902.0         153.6         665.1         780.6         262.6         205.6  P2 list-mtx
+       8         1117.5          81.4         417.6         483.7         160.7         107.2  P2 list-mtx
+      12         1168.0          57.5         333.2         416.6         131.3          74.5  P2 list-mtx
+      16         1224.6          44.7         287.5         378.5         107.0          57.6  P2 list-mtx
+      24         1321.6          32.2         254.4         355.8          88.6          45.4  P2 list-mtx
+      32         1370.3          27.2         247.3         348.6          80.1          40.0  P2 list-mtx
+
+Throughput (million ops/s)
+ threads   P1 graph-mtx   P2 list-mtx   P3 node-mtx    P4 node-rw   P5 node-cas   P6 optimist  best
+       1          3.683         4.108         1.422         0.778         2.093         2.834  P2 list-mtx
+       2          2.931         6.592         1.598         1.495         3.961         5.021  P2 list-mtx
+       4          2.217        13.019         3.007         2.562         7.617         9.728  P2 list-mtx
+       8          1.790        24.575         4.789         4.135        12.447        18.662  P2 list-mtx
+      12          1.712        34.769         6.003         4.800        15.237        26.856  P2 list-mtx
+      16          1.633        44.778         6.957         5.284        18.686        34.709  P2 list-mtx
+      24          1.513        62.060         7.863         5.622        22.571        44.042  P2 list-mtx
+      32          1.459        73.488         8.089         5.737        24.974        50.050  P2 list-mtx
+
+Speedup over sequential baseline
+ threads   P1 graph-mtx   P2 list-mtx   P3 node-mtx    P4 node-rw   P5 node-cas   P6 optimist  best
+       1           0.91          1.01          0.35          0.19          0.51          0.70  P2 list-mtx
+       2           0.72          1.62          0.39          0.37          0.97          1.23  P2 list-mtx
+       4           0.55          3.20          0.74          0.63          1.87          2.39  P2 list-mtx
+       8           0.44          6.04          1.18          1.02          3.06          4.59  P2 list-mtx
+      12           0.42          8.55          1.48          1.18          3.75          6.60  P2 list-mtx
+      16           0.40         11.01          1.71          1.30          4.60          8.54  P2 list-mtx
+      24           0.37         15.26          1.93          1.38          5.55         10.83  P2 list-mtx
+      32           0.36         18.07          1.99          1.41          6.14         12.31  P2 list-mtx
+
+Self speedup (T(impl, 1 thr) / T(impl, threads))
+ threads   P1 graph-mtx   P2 list-mtx   P3 node-mtx    P4 node-rw   P5 node-cas   P6 optimist  best
+       1           1.00          1.00          1.00          1.00          1.00          1.00  P1 graph-mtx
+       2           0.80          1.60          1.12          1.92          1.89          1.77  P4 node-rw
+       4           0.60          3.17          2.11          3.29          3.64          3.43  P5 node-cas
+       8           0.49          5.98          3.37          5.31          5.95          6.59  P6 optimist
+      12           0.46          8.46          4.22          6.17          7.28          9.48  P6 optimist
+      16           0.44         10.90          4.89          6.79          8.93         12.25  P6 optimist
+      24           0.41         15.11          5.53          7.22         10.78         15.54  P6 optimist
+      32           0.40         17.89          5.69          7.37         11.93         17.66  P2 list-mtx
+
+========================================================================================================
+ratio insert/delete/search = 10/10/80%   ops = 4000000   seq time = 1252.7 ms   final edges (seq) = 2382338
+========================================================================================================
+Time (ms)
+ threads   P1 graph-mtx   P2 list-mtx   P3 node-mtx    P4 node-rw   P5 node-cas   P6 optimist  best
+       1         1154.4        1223.4        4006.0        6392.4        1994.5        1569.0  P1 graph-mtx
+       2         1660.9         720.0        2621.7        3002.0        1064.3         993.4  P2 list-mtx
+       4         2045.3         383.2        1573.6        1837.5         573.0         503.7  P2 list-mtx
+       8         2412.4         212.4         923.6        1163.1         372.0         275.3  P2 list-mtx
+      12         2541.4         148.7         763.6         978.6         316.0         193.5  P2 list-mtx
+      16         2687.1         117.4         655.7         843.4         268.9         153.8  P2 list-mtx
+      24         2894.8          87.1         585.4         804.2         202.6         119.1  P2 list-mtx
+      32         2980.1          72.1         551.6         784.5         178.7          97.2  P2 list-mtx
+
+Throughput (million ops/s)
+ threads   P1 graph-mtx   P2 list-mtx   P3 node-mtx    P4 node-rw   P5 node-cas   P6 optimist  best
+       1          3.465         3.270         0.999         0.626         2.006         2.549  P1 graph-mtx
+       2          2.408         5.555         1.526         1.332         3.758         4.027  P2 list-mtx
+       4          1.956        10.438         2.542         2.177         6.981         7.941  P2 list-mtx
+       8          1.658        18.831         4.331         3.439        10.752        14.531  P2 list-mtx
+      12          1.574        26.907         5.238         4.087        12.659        20.670  P2 list-mtx
+      16          1.489        34.060         6.100         4.743        14.875        26.007  P2 list-mtx
+      24          1.382        45.927         6.833         4.974        19.745        33.575  P2 list-mtx
+      32          1.342        55.511         7.251         5.099        22.387        41.171  P2 list-mtx
+
+Speedup over sequential baseline
+ threads   P1 graph-mtx   P2 list-mtx   P3 node-mtx    P4 node-rw   P5 node-cas   P6 optimist  best
+       1           1.09          1.02          0.31          0.20          0.63          0.80  P1 graph-mtx
+       2           0.75          1.74          0.48          0.42          1.18          1.26  P2 list-mtx
+       4           0.61          3.27          0.80          0.68          2.19          2.49  P2 list-mtx
+       8           0.52          5.90          1.36          1.08          3.37          4.55  P2 list-mtx
+      12           0.49          8.43          1.64          1.28          3.96          6.47  P2 list-mtx
+      16           0.47         10.67          1.91          1.49          4.66          8.15  P2 list-mtx
+      24           0.43         14.38          2.14          1.56          6.18         10.52  P2 list-mtx
+      32           0.42         17.39          2.27          1.60          7.01         12.89  P2 list-mtx
+
+Self speedup (T(impl, 1 thr) / T(impl, threads))
+ threads   P1 graph-mtx   P2 list-mtx   P3 node-mtx    P4 node-rw   P5 node-cas   P6 optimist  best
+       1           1.00          1.00          1.00          1.00          1.00          1.00  P1 graph-mtx
+       2           0.70          1.70          1.53          2.13          1.87          1.58  P4 node-rw
+       4           0.56          3.19          2.55          3.48          3.48          3.11  P5 node-cas
+       8           0.48          5.76          4.34          5.50          5.36          5.70  P2 list-mtx
+      12           0.45          8.23          5.25          6.53          6.31          8.11  P2 list-mtx
+      16           0.43         10.42          6.11          7.58          7.42         10.20  P2 list-mtx
+      24           0.40         14.05          6.84          7.95          9.85         13.17  P2 list-mtx
+      32           0.39         16.98          7.26          8.15         11.16         16.15  P2 list-mtx
+
+========================================================================================================
+Checksum check (1 thread vs sequential baseline: final graphs must be identical)
+  all match
+
